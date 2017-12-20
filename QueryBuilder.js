@@ -1,0 +1,508 @@
+var OracleQueryCreator = require('./Query/OracleQueryCreator.js');
+var MysqlQueryCreator = require('./Query/MysqlQueryCreator.js');
+
+var QueryBuilder = function(databaseType, db){
+	this.queryObject = {};
+	this.queryString = "";
+	this.queryParameters = {};
+	this.databaseType = databaseType;
+	this.db = db;
+};
+
+/*
+This function adds items to select ( parameter can be both array and string )
+WARNING: This function overrides previous calls to select
+*/
+QueryBuilder.prototype.select = function(columns){
+	this.queryObject.select = [];
+
+	if(Array.isArray(columns))
+		this.queryObject.select = columns;
+	else if(typeof columns === 'string')
+		this.queryObject.select.push(columns);
+	else
+		throw "Unsupported type for 'select' function.";
+
+	return this;
+};
+
+/*
+This function adds items to select ( parameter can be both array and string )
+ */
+QueryBuilder.prototype.addSelect = function(columns){
+	if(!Array.isArray(this.queryObject.select))
+		this.queryObject.select = [];
+
+	if(Array.isArray(columns))
+		this.queryObject.select.concat(columns);
+	else if(typeof columns === 'string')
+		this.queryObject.select.push(columns);
+	else
+		throw "Unsupported type for 'select' function.";
+
+	return this;
+};
+
+/*
+This function sets table name for 'from' 
+ */
+QueryBuilder.prototype.from = function(tableName, alias = null){
+	if(typeof tableName !== 'string')
+		throw "Unsupported type for 'from' function."
+	if(alias && typeof alias !== 'string')
+		throw "Unsupported type for 'from' function.";
+
+	this.queryObject.from = {
+		"tableName": tableName, 
+		"alias": alias
+	};
+
+	return this;
+};
+
+/*
+This function adds items to where ( parameter can be both array and string )
+WARNING: This function overrides all previously set conditions
+ */
+QueryBuilder.prototype.where = function(filters){
+	this.queryObject.where = [];
+
+	if(Array.isArray(filters)){
+		for(var i = 0; i < filters.length; i++){
+			var obj = {
+				"condition" : "AND",
+				"filter" : filters[i]
+			};
+
+			this.queryObject.where.push(obj);
+		}
+	}
+	else if(typeof filters === 'string')
+		this.queryObject.where.push({
+			"condition" : "AND",
+			"filter" : filters
+		});
+	else
+		throw "Unsupported type for 'where' function.";
+
+	return this;
+};
+
+/*
+This function adds items to where ( parameter can be both array and string )
+ */
+QueryBuilder.prototype.andWhere = function(filters){
+	if(!Array.isArray(this.queryObject.where))
+		this.queryObject.where = [];
+
+	if(Array.isArray(filters)){
+		for(var i = 0; i < filters.length; i++){
+			var obj = {
+				"condition" : "AND",
+				"filter" : filters[i]
+			};
+
+			this.queryObject.where.push(obj);
+		}
+	}
+	else if(typeof filters === 'string')
+		this.queryObject.where.push({
+			"condition" : "AND",
+			"filter" : filters
+		});
+	else
+		throw "Unsupported type for 'where' function.";
+
+	return this;
+};
+
+/*
+This function adds items to where ( parameter can be both array and string )
+ */
+QueryBuilder.prototype.orWhere = function(filters){
+	if(!Array.isArray(this.queryObject.where))
+		this.queryObject.where = [];
+
+	if(Array.isArray(filters)){
+		for(var i = 0; i < filters.length; i++){
+			var obj = {
+				"condition" : "OR",
+				"filter" : filters[i]
+			};
+
+			this.queryObject.where.push(obj);
+		}
+	}
+	else if(typeof filters === 'string')
+		this.queryObject.where.push({
+			"condition" : "OR",
+			"filter" : filters
+		});
+	else
+		throw "Unsupported type for 'where' function.";
+
+	return this;
+};
+
+/*
+This function adds join statements
+ */
+QueryBuilder.prototype.join = function(tableName, alias, conditions = null){
+	if(typeof tableName !== 'string')
+		throw "Unsupported type for 'join' function.";
+	if(typeof alias !== 'string')
+		throw "Unsupported type for 'join' function.";
+	if(conditions && typeof conditions !== 'string')
+		throw "Unsupported type for 'join' function.";
+
+	if(!Array.isArray(this.queryObject.join))
+		this.queryObject.join = [];
+
+	this.queryObject.join.push({
+		"type" : "INNER",
+		"tableName" : tableName,
+		"alias" : alias,
+		"conditions" : conditions
+	});
+
+	return this;
+};
+
+/*
+This function adds left join statements
+ */
+QueryBuilder.prototype.leftJoin = function(tableName, alias, conditions = null){
+	if(typeof tableName !== 'string')
+		throw "Unsupported type for 'leftJoin' function.";
+	if(typeof alias !== 'string')
+		throw "Unsupported type for 'leftJoin' function.";
+	if(conditions && typeof conditions !== 'string')
+		throw "Unsupported type for 'leftJoin' function.";
+
+	if(!Array.isArray(this.queryObject.join))
+		this.queryObject.join = [];
+
+	this.queryObject.join.push({
+		"type" : "LEFT",
+		"tableName" : tableName,
+		"alias" : alias,
+		"conditions" : conditions
+	});
+
+	return this;
+};
+
+/*
+This function adds right join statements
+ */
+QueryBuilder.prototype.rightJoin = function(tableName, alias, conditions = null){
+	if(typeof tableName !== 'string')
+		throw "Unsupported type for 'rightJoin' function.";
+	if(typeof alias !== 'string')
+		throw "Unsupported type for 'rightJoin' function.";
+	if(conditions && typeof conditions !== 'string')
+		throw "Unsupported type for 'rightJoin' function.";
+
+	if(!Array.isArray(this.queryObject.join))
+		this.queryObject.join = [];
+
+	this.queryObject.join.push({
+		"type" : "RIGHT",
+		"tableName" : tableName,
+		"alias" : alias,
+		"conditions" : conditions
+	});
+
+	return this;
+};
+
+/*
+This function adds ordering condition
+WARNING: this function overrides all previously set ordering conditions
+ */
+QueryBuilder.prototype.orderBy = function(column, direction = null){
+	if(typeof column !== 'string')
+		throw "Unsupported type for 'orderBy' function.";
+	if(direction && typeof direction !== 'string')
+		throw "Unsupported type for 'orderBy' function.";
+
+	this.queryObject.orderBy = [];
+
+	this.queryObject.orderBy.push({
+		"column" : column,
+		"direction" : direction
+	});
+
+	return this;
+};
+
+/*
+This function adds ordering condition
+ */
+QueryBuilder.prototype.addOrderBy = function(column, direction = null){
+	if(typeof column !== 'string')
+		throw "Unsupported type for 'orderBy' function.";
+	if(direction && typeof direction !== 'string')
+		throw "Unsupported type for 'orderBy' function.";
+
+	if(!Array.isArray(this.queryObject.orderBy))
+		this.queryObject.orderBy = [];
+
+	this.queryObject.orderBy.push({
+		"column" : column,
+		"direction" : direction
+	});
+
+	return this;
+};
+
+/*
+This function adds grouping condition
+WARNING: This function overrides all previously set grouping conditions
+ */
+QueryBuilder.prototype.groupBy = function(column){
+	if(typeof column !== 'string')
+		throw "Unsupported type for 'groupBy' function.";
+
+	this.queryObject.groupBy = [];
+
+	this.queryObject.groupBy.push(column);
+
+	return this;
+};
+
+/*
+This function adds grouping condition
+ */
+QueryBuilder.prototype.addGroupBy = function(column){
+	if(typeof column !== 'string')
+		throw "Unsupported type for 'groupBy' function.";
+
+	if(!Array.isArray(this.queryObject.groupBy))
+		this.queryObject.groupBy = [];
+
+	this.queryObject.groupBy.push(column);
+
+	return this;
+};
+
+/*
+This function adds having conditions
+WARNING: This function overrides all previously set having conditions
+ */
+QueryBuilder.prototype.having = function(filters){
+	this.queryObject.having = [];
+
+	if(Array.isArray(filters)){
+		for(var i = 0; i < filters.length; i++){
+			var obj = {
+				"condition" : "AND",
+				"filter" : filters[i]
+			};
+
+			this.queryObject.having.push(obj);
+		}
+	}else if(typeof filters === 'string'){
+		this.queryObject.having.push({
+			"condition" : "AND",
+			"filter" : filters
+		});
+	}else
+		throw "Unsupported type for 'having' function.";
+
+	return this;
+};
+
+/*
+This function adds having conditions
+ */
+QueryBuilder.prototype.andHaving = function(filters){
+	if(!Array.isArray(this.queryObject.having))
+		this.queryObject.having = [];
+
+	if(Array.isArray(filters)){
+		for(var i = 0; i < filters.length; i++){
+			var obj = {
+				"condition" : "AND",
+				"filter" : filters[i]
+			};
+
+			this.queryObject.having.push(obj);
+		}
+	}else if(typeof filters === 'string'){
+		this.queryObject.having.push({
+			"condition" : "AND",
+			"filter" : filters
+		});
+	}else
+		throw "Unsupported type for 'andHaving' function.";
+
+	return this;
+};
+
+/*
+This function adds having conditions
+ */
+QueryBuilder.prototype.orHaving = function(filters){
+	if(!Array.isArray(this.queryObject.having))
+		this.queryObject.having = [];
+
+	if(Array.isArray(filters)){
+		for(var i = 0; i < filters.length; i++){
+			var obj = {
+				"condition" : "OR",
+				"filter" : filters[i]
+			};
+
+			this.queryObject.having.push(obj);
+		}
+	}else if(typeof filters === 'string'){
+		this.queryObject.having.push({
+			"condition" : "OR",
+			"filter" : filters
+		});
+	}else
+		throw "Unsupported type for 'orHaving' function.";
+
+	return this;	
+};
+
+/*
+This function set offset to sql
+ */
+QueryBuilder.prototype.offset = function(offset){
+	if(!Number.isInteger(offset))
+		throw "Unsupported type for 'offset' function.";
+
+	this.queryObject.offset = offset;
+
+	return this;
+};
+
+/*
+This function set limit to sql
+ */
+QueryBuilder.prototype.limit = function(limit){
+	if(!Number.isInteger(limit))
+		throw "Unsupported type for 'limit' function.";
+
+	this.queryObject.limit = limit;
+
+	return this;
+};
+
+/*
+This function binds parameters to sql
+ */
+QueryBuilder.prototype.setParameter = function(parameter){
+	for(var i in parameter)
+		this.queryParameters[i] = parameter[i];
+
+	return this;
+};
+
+/*
+This function binds parameters to sql
+Warning: This function override all other 
+ */
+QueryBuilder.prototype.setParameters = function(parameters){
+	this.queryParameters = parameters;
+
+	return this;
+};
+
+/*
+This function allow to execute raw sql strings
+WARNING: This function override all other functions
+ */
+QueryBuilder.prototype.raw = function(sqlString, parameters = []){
+	if(typeof sqlString !== 'string')
+		throw "Unsupported type for 'raw' function.";
+
+	this.queryObject = {};
+	this.queryString = sqlString;
+	this.queryParameters = parameters;
+
+	return this;
+};
+
+/*
+This function executes queries these are create with query builder.
+ */
+QueryBuilder.prototype.execute = function(countParam = false, callback){
+	// check params
+	if(typeof countParam == "function"){
+		callback = countParam;
+		countParam = false;
+	}
+
+	switch(this.databaseType){
+		case "ORACLE":
+			var queryCreator = new OracleQueryCreator(this.queryObject, this.db.getServerVersion());
+			break;
+		case "MYSQL":
+			var queryCreator = new MysqlQueryCreator(this.queryObject);
+			break;
+		default:
+			var queryCreator = new OracleQueryCreator(this.queryObject, this.db.getServerVersion());
+			break;
+	}
+
+	var sqlString = "";
+	var countSqlString = "";
+	// check raw or object
+	if(!this.queryString || this.queryString == ""){
+		var sqlObject = queryCreator.createSelectQuery();
+		sqlString = sqlObject.sqlString;
+		countSqlString = sqlObject.countString;
+	}else{
+		sqlString = this.queryString;
+		countSqlString = queryCreator.createCountQueryFromRaw(sqlString);
+	}
+
+	this.db.execute(sqlString, this.queryParameters, countSqlString, callback);
+};
+
+/*
+This function gives prepared sql string
+ */
+QueryBuilder.prototype.getSql = function(serverVersion = 0){
+	if(!isObjectEmpty(this.queryObject)){
+		switch(this.databaseType){
+			case "ORACLE":
+				var queryCreator = new OracleQueryCreator(this.queryObject, serverVersion);
+				break;
+			case "MYSQL":
+				var queryCreator = new MysqlQueryCreator(this.queryObject);
+				break;
+			default:
+				var queryCreator = new OracleQueryCreator(this.queryObject, serverVersion);
+				break;
+		}
+
+		var sqlObject = queryCreator.createSelectQuery();
+		var sqlString = sqlObject.sqlString;
+
+		return sqlString;
+	}
+
+	return "";
+};
+
+/*
+This function gives parameters
+ */
+QueryBuilder.prototype.getParameters = function(){
+	return this.queryParameters;
+};
+
+var isObjectEmpty = function(obj){
+	for(var i in obj){
+		if(obj.hasOwnProperty(i))
+			return false;
+	}
+
+	return true;
+}
+
+module.exports = QueryBuilder;
