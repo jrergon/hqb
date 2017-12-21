@@ -1,12 +1,12 @@
 var OracleQueryCreator = require('./Query/OracleQueryCreator.js');
 var MysqlQueryCreator = require('./Query/MysqlQueryCreator.js');
 
-var QueryBuilder = function(databaseType, db){
+var QueryBuilder = function(databaseType, serverVersion){
 	this.queryObject = {};
 	this.queryString = "";
 	this.queryParameters = {};
 	this.databaseType = databaseType;
-	this.db = db;
+	this.serverVersion = serverVersion;
 };
 
 /*
@@ -438,13 +438,13 @@ QueryBuilder.prototype.execute = function(countParam = false, callback){
 
 	switch(this.databaseType){
 		case "ORACLE":
-			var queryCreator = new OracleQueryCreator(this.queryObject, this.db.getServerVersion());
+			var queryCreator = new OracleQueryCreator(this.queryObject, this.serverVersion);
 			break;
 		case "MYSQL":
 			var queryCreator = new MysqlQueryCreator(this.queryObject);
 			break;
 		default:
-			var queryCreator = new OracleQueryCreator(this.queryObject, this.db.getServerVersion());
+			var queryCreator = new OracleQueryCreator(this.queryObject, this.serverVersion);
 			break;
 	}
 

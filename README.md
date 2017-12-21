@@ -1,2 +1,2 @@
 # hqb
-QueryBuilder For Nodejs
+Query Builder For Nodejs

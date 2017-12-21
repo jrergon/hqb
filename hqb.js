@@ -47,7 +47,9 @@ Hqb.prototype.setConnection = function(type, connectionPromise){
 };	
 
 Hqb.prototype.createQueryBuilder = function(){
-	return new QueryBuilder(this.dbConfig.type, this.db);
+	this.db.getServerVersion(function(serverVersion){
+		return new QueryBuilder(this.dbConfig.type, serverVersion);
+	});
 };
 
 // Set auto commit status, boolean - Default TRUE

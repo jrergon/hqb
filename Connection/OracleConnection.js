@@ -63,7 +63,6 @@ OracleConnection.prototype.execute = function(sql, params, countSql, callback){
 			var returnedData = {data:[]};
 		if(countSql && countSql != "")
 			asyncCounter = 2;
-
 		var endAsyncCallback = function(err, data, type){
 			if(type == "data")
 				returnedData.data = data;
@@ -100,7 +99,6 @@ OracleConnection.prototype.execute = function(sql, params, countSql, callback){
 					endAsyncCallback(err, null);
 					return;
 				}
-				
 				endAsyncCallback(null, data.rows[0]["CNT"], "count");
 				return;
 			});
