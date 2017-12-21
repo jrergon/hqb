@@ -1,12 +1,13 @@
 var OracleQueryCreator = require('./Query/OracleQueryCreator.js');
 var MysqlQueryCreator = require('./Query/MysqlQueryCreator.js');
 
-var QueryBuilder = function(databaseType, serverVersion){
+var QueryBuilder = function(databaseType, serverVersion, db){
 	this.queryObject = {};
 	this.queryString = "";
 	this.queryParameters = {};
 	this.databaseType = databaseType;
 	this.serverVersion = serverVersion;
+	this.db = db;
 };
 
 /*
