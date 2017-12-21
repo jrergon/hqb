@@ -70,14 +70,8 @@ OracleConnection.prototype.execute = function(sql, params, countSql, callback){
 				returnedData.count = data;
 
 			counter++;
-			if(counter == asyncCounter){
-				conn.close(function(err){
-					if(err)
-						console.log(err.message);
-				});
-
+			if(counter == asyncCounter)
 				callback(err, returnedData);
-			}
 		};
 		// -- handle async queries 
 		
@@ -140,11 +134,7 @@ OracleConnection.prototype.commit = function(){
 		conn.commit(function(err){
 			if(err)
 				console.log(err);
-			conn.close(function(err){
-				if(err)
-					console.log(err);
-				oracle.setAutoCommit(true);
-			});
+			oracle.setAutoCommit(true);
 		});
 	}, (err) => {
 		return 0;
@@ -156,15 +146,22 @@ OracleConnection.prototype.rollback = function(){
 		conn.rollback(function(err){
 			if(err)
 				console.log(err);
-			conn.close(function(err){
-				if(err)
-					console.log(err);
-				oracle.setAutoCommit(true);
-			});
+			oracle.setAutoCommit(true);
 		});
 	}, (err) => {
 		return 0;
 	});
 };
+
+OracleConnection.prototype.closeConnection = function(){
+	this.connectionPromise.then((conn) => {
+		conn.close(function(err){
+			if(err)
+				console.log(err.message);
+		});		
+	}, (err) => {
+		console.log(err);
+	});
+}
 
 module.exports = OracleConnection;

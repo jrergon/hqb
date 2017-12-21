@@ -89,4 +89,8 @@ Hqb.prototype.getConnection = function(cb){
 	});
 };
 
+Hqb.prototype.closeConnection = function(){
+	this.db.closeConnection();
+};
+
 module.exports = Hqb;

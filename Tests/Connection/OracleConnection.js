@@ -121,6 +121,7 @@ describe('OracleConnection', function(){
 			expect(data.data).to.be.an("array");
 			expect(data.data).to.have.lengthOf(5);
 
+			oracleConnection.closeConnection();
 			done();
 		});
 	});
@@ -140,6 +141,7 @@ describe('OracleConnection', function(){
 			expect(data.data).to.have.lengthOf(5);
 			expect(data.count).to.equal(5);
 
+			oracleConnection.closeConnection();
 			done();
 		});
 	});
@@ -158,6 +160,7 @@ describe('OracleConnection', function(){
 			expect(data.data).to.be.an("array");
 			expect(data.data).to.have.lengthOf(0);
 
+			oracleConnection.closeConnection();
 			done();
 		});
 	});
@@ -177,6 +180,7 @@ describe('OracleConnection', function(){
 			expect(data.data).to.have.lengthOf(0);
 			expect(data.count).to.equal(0);
 
+			oracleConnection.closeConnection();
 			done();
 		});
 	});
@@ -194,6 +198,7 @@ describe('OracleConnection', function(){
 		oracleConnection.getServerVersion(function(data){
 			expect(data).to.have.above(999999999);
 
+			oracleConnection.closeConnection();
 			done();
 		});
 	});
