@@ -79,4 +79,14 @@ Hqb.prototype.rollback = function(){
 	this.db.rollback();
 };
 
+Hqb.prototype.getConnection = function(cb){
+	var connPromise = this.db.getConnection();
+
+	connPromise.then((conn) => {
+		cb(null, conn);
+	}, (err) => {
+		cb(err, null);
+	});
+};
+
 module.exports = Hqb;

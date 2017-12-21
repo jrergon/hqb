@@ -1,7 +1,9 @@
 {
-  "dependencies": {
-    "chai": "^4.1.2",
-    "mysql": "^2.15.0",
-    "oracledb": "^2.0.15"
-  }
+	"name": "hqb",
+	"version": "0.0.2",
+	"dependencies": {
+		"chai": "^4.1.2",
+		"mysql": "^2.15.0",
+		"oracledb": "^2.0.15"
+	}
 }
