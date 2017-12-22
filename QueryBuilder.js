@@ -467,17 +467,17 @@ QueryBuilder.prototype.execute = function(countParam = false, callback){
 /*
 This function gives prepared sql string
  */
-QueryBuilder.prototype.getSql = function(serverVersion = 0){
+QueryBuilder.prototype.getSql = function(){
 	if(!isObjectEmpty(this.queryObject)){
 		switch(this.databaseType){
 			case "ORACLE":
-				var queryCreator = new OracleQueryCreator(this.queryObject, serverVersion);
+				var queryCreator = new OracleQueryCreator(this.queryObject, this.serverVersion);
 				break;
 			case "MYSQL":
 				var queryCreator = new MysqlQueryCreator(this.queryObject);
 				break;
 			default:
-				var queryCreator = new OracleQueryCreator(this.queryObject, serverVersion);
+				var queryCreator = new OracleQueryCreator(this.queryObject, this.serverVersion);
 				break;
 		}
 
