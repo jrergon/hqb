@@ -1,11 +1,10 @@
-var mysql = require('mysql');
-
 var MysqlConnection = function(){
+	this.mysql = require('mysql');
 	this.connection = null;
 };
 
 MysqlConnection.prototype.setConnection = function(config){
-	this.connection = mysql.createConnection(config).connect(function(err){
+	this.connection = this.mysql.createConnection(config).connect(function(err){
 		if(err)
 			throw err;
 	});

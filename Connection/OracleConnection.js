@@ -1,19 +1,19 @@
-var oracle = require('oracledb');
-
-oracle.outFormat = oracle.OBJECT;
-oracle.autoCommit = true;
-oracle.fetchArraySize = 100000;
-
 var OracleConnection = function(){
+	this.oracle = require('oracledb');
+
+	this.oracle.outFormat = this.oracle.OBJECT;
+	this.oracle.autoCommit = true;
+	this.oracle.fetchArraySize = 100000;
+
 	this.connectionPromise = null;
 };
 
 OracleConnection.prototype.initConnection = function(config){
 	if(config.poolAlias){
 		this.connectionPromise = new Promise(function(resolve, reject){
-			oracle.createPool(config, function(err, pool){
+			this.oracle.createPool(config, function(err, pool){
 				if(err){
-					var defaultPool = oracle.getPool(config.poolAlias);
+					var defaultPool = this.oracle.getPool(config.poolAlias);
 					defaultPool.getConnection(function(err, conn){
 						if(err)
 							reject(err);
@@ -32,7 +32,7 @@ OracleConnection.prototype.initConnection = function(config){
 		});
 	}else{
 		this.connectionPromise = new Promise(function(resolve,reject){
-			oracle.getConnection(config, function(err, conn){
+			this.oracle.getConnection(config, function(err, conn){
 				if(err)
 					reject(err);
 				else
@@ -111,22 +111,22 @@ OracleConnection.prototype.getServerVersion = function(cb){
 };
 
 OracleConnection.prototype.setAutoCommit = function(status){
-	oracle.autoCommit = status;
+	this.oracle.autoCommit = status;
 };
 
 OracleConnection.prototype.setFetchMode = function(mode){
 	switch(mode){
 		case "OBJECT":
-			oracle.outFormat = oracle.OBJECT;
+			this.oracle.outFormat = this.oracle.OBJECT;
 			break;
 		case "ARRAY":
-			oracle.outFormat = oracle.ARRAY;
+			this.oracle.outFormat = this.oracle.ARRAY;
 			break;
 	}
 };
 
 OracleConnection.prototype.setFetchSize = function(size){
-	oracle.fetchArraySize = size;
+	this.oracle.fetchArraySize = size;
 };
 
 OracleConnection.prototype.commit = function(){
@@ -134,7 +134,7 @@ OracleConnection.prototype.commit = function(){
 		conn.commit(function(err){
 			if(err)
 				console.log(err);
-			oracle.setAutoCommit(true);
+			this.oracle.setAutoCommit(true);
 		});
 	}, (err) => {
 		return 0;
@@ -146,7 +146,7 @@ OracleConnection.prototype.rollback = function(){
 		conn.rollback(function(err){
 			if(err)
 				console.log(err);
-			oracle.setAutoCommit(true);
+			this.oracle.setAutoCommit(true);
 		});
 	}, (err) => {
 		return 0;
