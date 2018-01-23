@@ -5,7 +5,7 @@ var oracledb = require('oracledb');
 var testConfig = require('./../config');
 
 describe('OracleConnection', function(){
-	it('initConnection should set a promise for pooled connection that resolves Connection object.', function(done){
+	it('initConnection should set a promise for pooled connection that resolves connection object.', function(done){
 		var oracleConnection = new OracleConnection();
 
 		oracleConnection.initConnection({
@@ -23,7 +23,7 @@ describe('OracleConnection', function(){
 		});
 	});
 
-	it('initConnection should set a promise for direct connection that resolves Connection object.', function(done){
+	it('initConnection should set a promise for direct connection that resolves connection object.', function(done){
 		var oracleConnection = new OracleConnection();
 
 		oracleConnection.initConnection({
@@ -40,7 +40,7 @@ describe('OracleConnection', function(){
 		});
 	});
 
-	it('setConnection should set a promise for pooled connection that resolves Connection object.', function(done){
+	it('setConnection should set a promise for pooled connection that resolves connection object.', function(done){
 		var oracleConnection = new OracleConnection();
 		var config = {
 			poolAlias: testConfig.oracleDb.poolAlias,
@@ -80,7 +80,7 @@ describe('OracleConnection', function(){
 		});
 	});
 
-	it('setConnection should set a promise for direct connection that resolves Connection object.', function(done){
+	it('setConnection should set a promise for direct connection that resolves connection object.', function(done){
 		var oracleConnection = new OracleConnection();
 		var config = {
 		    connectString: testConfig.oracleDb.connectString,  

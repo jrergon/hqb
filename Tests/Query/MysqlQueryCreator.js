@@ -1,16 +1,14 @@
 var chai = require('chai');
 var expect = chai.expect;
-var OracleQueryCreator = require('./../../Query/OracleQueryCreator');
+var MysqlQueryCreator = require('./../../Query/MysqlQueryCreator');
 
-describe('OracleQueryCreator', function(){
+describe('MysqlQueryCreator', function(){
 	it('basic select query', function(){
 		var queryObject = {
 			from : { tableName : 'HQB_TEST_BUS', alias : 'a' }
 		};
 
-		var serverVersion = '1201000000';
-
-		queryCreator = new OracleQueryCreator(queryObject, serverVersion);
+		queryCreator = new MysqlQueryCreator(queryObject);
 		query = queryCreator.createSelectQuery();
 
 		expect(query.sqlString).to.equal('SELECT * FROM HQB_TEST_BUS a');
@@ -23,9 +21,7 @@ describe('OracleQueryCreator', function(){
 			from : { tableName : 'HQB_TEST_BUS', alias : 'a' }
 		};
 
-		var serverVersion = '1201000000';
-
-		queryCreator = new OracleQueryCreator(queryObject, serverVersion);
+		queryCreator = new MysqlQueryCreator(queryObject);
 		query = queryCreator.createSelectQuery();
 
 		expect(query.sqlString).to.equal('SELECT BUS_ID,PLATE FROM HQB_TEST_BUS a');
@@ -39,9 +35,7 @@ describe('OracleQueryCreator', function(){
 			join : [ { tableName : 'HQB_TEST_COMPANY', alias : 'b', type : 'LEFT', conditions : 'a.company_id = b.company_id'}]
 		};
 
-		var serverVersion = '1201000000';
-
-		queryCreator = new OracleQueryCreator(queryObject, serverVersion);
+		queryCreator = new MysqlQueryCreator(queryObject);
 		query = queryCreator.createSelectQuery();
 
 		expect(query.sqlString).to.equal('SELECT a.PLATE,b.NAME FROM HQB_TEST_BUS a LEFT JOIN HQB_TEST_COMPANY b ON a.company_id = b.company_id');
@@ -58,9 +52,7 @@ describe('OracleQueryCreator', function(){
 			]
 		};
 
-		var serverVersion = '1201000000';
-
-		queryCreator = new OracleQueryCreator(queryObject, serverVersion);
+		queryCreator = new MysqlQueryCreator(queryObject);
 		query = queryCreator.createSelectQuery();
 
 		expect(query.sqlString).to.equal('SELECT a.PLATE,b.NAME,c.NAME FROM HQB_TEST_BUS a INNER JOIN HQB_TEST_COMPANY b ON a.company_id = b.company_id LEFT JOIN HQB_TEST_BRAND c ON a.brand_id = c.brand_id');
@@ -81,9 +73,7 @@ describe('OracleQueryCreator', function(){
 			]
 		};
 
-		var serverVersion = '1201000000';
-
-		queryCreator = new OracleQueryCreator(queryObject, serverVersion);
+		queryCreator = new MysqlQueryCreator(queryObject);
 		query = queryCreator.createSelectQuery();
 
 		expect(query.sqlString).to.equal('SELECT a.PLATE,b.NAME,c.NAME FROM HQB_TEST_BUS a INNER JOIN HQB_TEST_COMPANY b ON a.company_id = b.company_id LEFT JOIN HQB_TEST_BRAND c ON a.brand_id = c.brand_id WHERE a.company_id = 1 AND a.brand_id = 1');
@@ -105,9 +95,7 @@ describe('OracleQueryCreator', function(){
 			groupBy : ['a.PLATE','b.NAME','c.NAME']
 		};
 
-		var serverVersion = '1201000000';
-
-		queryCreator = new OracleQueryCreator(queryObject, serverVersion);
+		queryCreator = new MysqlQueryCreator(queryObject);
 		query = queryCreator.createSelectQuery();
 
 		expect(query.sqlString).to.equal('SELECT a.PLATE,b.NAME,c.NAME FROM HQB_TEST_BUS a INNER JOIN HQB_TEST_COMPANY b ON a.company_id = b.company_id LEFT JOIN HQB_TEST_BRAND c ON a.brand_id = c.brand_id WHERE a.company_id = 1 AND a.brand_id = 1 GROUP BY a.PLATE,b.NAME,c.NAME');
@@ -132,9 +120,7 @@ describe('OracleQueryCreator', function(){
 			]
 		};
 
-		var serverVersion = '1201000000';
-
-		queryCreator = new OracleQueryCreator(queryObject, serverVersion);
+		queryCreator = new MysqlQueryCreator(queryObject);
 		query = queryCreator.createSelectQuery();
 
 		expect(query.sqlString).to.equal('SELECT a.PLATE,b.NAME,c.NAME FROM HQB_TEST_BUS a INNER JOIN HQB_TEST_COMPANY b ON a.company_id = b.company_id LEFT JOIN HQB_TEST_BRAND c ON a.brand_id = c.brand_id WHERE a.company_id = 1 AND a.brand_id = 1 HAVING COUNT(b.NAME) > 1 GROUP BY a.PLATE,b.NAME,c.NAME');
@@ -163,9 +149,7 @@ describe('OracleQueryCreator', function(){
 			]
 		};
 
-		var serverVersion = '1201000000';
-
-		queryCreator = new OracleQueryCreator(queryObject, serverVersion);
+		queryCreator = new MysqlQueryCreator(queryObject);
 		query = queryCreator.createSelectQuery();
 
 		expect(query.sqlString).to.equal('SELECT a.PLATE,b.NAME,c.NAME FROM HQB_TEST_BUS a INNER JOIN HQB_TEST_COMPANY b ON a.company_id = b.company_id LEFT JOIN HQB_TEST_BRAND c ON a.brand_id = c.brand_id WHERE a.company_id = 1 AND a.brand_id = 1 HAVING COUNT(b.NAME) > 1 GROUP BY a.PLATE,b.NAME,c.NAME ORDER BY b.name ASC,a.company_id DESC');
@@ -195,12 +179,10 @@ describe('OracleQueryCreator', function(){
 			offset : 10
 		};
 
-		var serverVersion = '1201000000';
-
-		queryCreator = new OracleQueryCreator(queryObject, serverVersion);
+		queryCreator = new MysqlQueryCreator(queryObject);
 		query = queryCreator.createSelectQuery();
 
-		expect(query.sqlString).to.equal('SELECT a.PLATE,b.NAME,c.NAME FROM HQB_TEST_BUS a INNER JOIN HQB_TEST_COMPANY b ON a.company_id = b.company_id LEFT JOIN HQB_TEST_BRAND c ON a.brand_id = c.brand_id WHERE a.company_id = 1 AND a.brand_id = 1 HAVING COUNT(b.NAME) > 1 GROUP BY a.PLATE,b.NAME,c.NAME ORDER BY b.name ASC,a.company_id DESC OFFSET 10 ROWS');
+		expect(query.sqlString).to.equal('SELECT a.PLATE,b.NAME,c.NAME FROM HQB_TEST_BUS a INNER JOIN HQB_TEST_COMPANY b ON a.company_id = b.company_id LEFT JOIN HQB_TEST_BRAND c ON a.brand_id = c.brand_id WHERE a.company_id = 1 AND a.brand_id = 1 HAVING COUNT(b.NAME) > 1 GROUP BY a.PLATE,b.NAME,c.NAME ORDER BY b.name ASC,a.company_id DESC OFFSET 10');
 		expect(query.countString).to.equal('SELECT COUNT(*) as CNT FROM (SELECT a.PLATE,b.NAME,c.NAME FROM HQB_TEST_BUS a INNER JOIN HQB_TEST_COMPANY b ON a.company_id = b.company_id LEFT JOIN HQB_TEST_BRAND c ON a.brand_id = c.brand_id WHERE a.company_id = 1 AND a.brand_id = 1 HAVING COUNT(b.NAME) > 1 GROUP BY a.PLATE,b.NAME,c.NAME ORDER BY b.name ASC,a.company_id DESC)');
 	});
 
@@ -227,12 +209,10 @@ describe('OracleQueryCreator', function(){
 			limit : 20
 		};
 
-		var serverVersion = '1201000000';
-
-		queryCreator = new OracleQueryCreator(queryObject, serverVersion);
+		queryCreator = new MysqlQueryCreator(queryObject);
 		query = queryCreator.createSelectQuery();
 
-		expect(query.sqlString).to.equal('SELECT a.PLATE,b.NAME,c.NAME FROM HQB_TEST_BUS a INNER JOIN HQB_TEST_COMPANY b ON a.company_id = b.company_id LEFT JOIN HQB_TEST_BRAND c ON a.brand_id = c.brand_id WHERE a.company_id = 1 AND a.brand_id = 1 HAVING COUNT(b.NAME) > 1 GROUP BY a.PLATE,b.NAME,c.NAME ORDER BY b.name ASC,a.company_id DESC FETCH NEXT 20 ROWS ONLY');
+		expect(query.sqlString).to.equal('SELECT a.PLATE,b.NAME,c.NAME FROM HQB_TEST_BUS a INNER JOIN HQB_TEST_COMPANY b ON a.company_id = b.company_id LEFT JOIN HQB_TEST_BRAND c ON a.brand_id = c.brand_id WHERE a.company_id = 1 AND a.brand_id = 1 HAVING COUNT(b.NAME) > 1 GROUP BY a.PLATE,b.NAME,c.NAME ORDER BY b.name ASC,a.company_id DESC LIMIT 20');
 		expect(query.countString).to.equal('SELECT COUNT(*) as CNT FROM (SELECT a.PLATE,b.NAME,c.NAME FROM HQB_TEST_BUS a INNER JOIN HQB_TEST_COMPANY b ON a.company_id = b.company_id LEFT JOIN HQB_TEST_BRAND c ON a.brand_id = c.brand_id WHERE a.company_id = 1 AND a.brand_id = 1 HAVING COUNT(b.NAME) > 1 GROUP BY a.PLATE,b.NAME,c.NAME ORDER BY b.name ASC,a.company_id DESC)');
 	});
 
@@ -260,12 +240,10 @@ describe('OracleQueryCreator', function(){
 			limit : 20
 		};
 
-		var serverVersion = '1201000000';
-
-		queryCreator = new OracleQueryCreator(queryObject, serverVersion);
+		queryCreator = new MysqlQueryCreator(queryObject);
 		query = queryCreator.createSelectQuery();
 
-		expect(query.sqlString).to.equal('SELECT a.PLATE,b.NAME,c.NAME FROM HQB_TEST_BUS a INNER JOIN HQB_TEST_COMPANY b ON a.company_id = b.company_id LEFT JOIN HQB_TEST_BRAND c ON a.brand_id = c.brand_id WHERE a.company_id = 1 AND a.brand_id = 1 HAVING COUNT(b.NAME) > 1 GROUP BY a.PLATE,b.NAME,c.NAME ORDER BY b.name ASC,a.company_id DESC OFFSET 10 ROWS FETCH NEXT 20 ROWS ONLY');
+		expect(query.sqlString).to.equal('SELECT a.PLATE,b.NAME,c.NAME FROM HQB_TEST_BUS a INNER JOIN HQB_TEST_COMPANY b ON a.company_id = b.company_id LEFT JOIN HQB_TEST_BRAND c ON a.brand_id = c.brand_id WHERE a.company_id = 1 AND a.brand_id = 1 HAVING COUNT(b.NAME) > 1 GROUP BY a.PLATE,b.NAME,c.NAME ORDER BY b.name ASC,a.company_id DESC LIMIT 20 OFFSET 10');
 		expect(query.countString).to.equal('SELECT COUNT(*) as CNT FROM (SELECT a.PLATE,b.NAME,c.NAME FROM HQB_TEST_BUS a INNER JOIN HQB_TEST_COMPANY b ON a.company_id = b.company_id LEFT JOIN HQB_TEST_BRAND c ON a.brand_id = c.brand_id WHERE a.company_id = 1 AND a.brand_id = 1 HAVING COUNT(b.NAME) > 1 GROUP BY a.PLATE,b.NAME,c.NAME ORDER BY b.name ASC,a.company_id DESC)');
 	});
 });

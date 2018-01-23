@@ -1,0 +1,1 @@
+CREATE DATABASE `hqb_test`;

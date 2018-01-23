@@ -1,4 +1,4 @@
-var OracleConnection = function(){
+var OracleConnection = function() {
 	this.oracle = require('oracledb');
 
 	this.oracle.outFormat = this.oracle.OBJECT;
@@ -8,92 +8,109 @@ var OracleConnection = function(){
 	this.connectionPromise = null;
 };
 
-OracleConnection.prototype.initConnection = function(config){
-	if(config.poolAlias){
-		this.connectionPromise = new Promise(function(resolve, reject){
-			this.oracle.createPool(config, function(err, pool){
-				if(err){
-					var defaultPool = this.oracle.getPool(config.poolAlias);
-					defaultPool.getConnection(function(err, conn){
-						if(err)
+OracleConnection.prototype.initConnection = function(config) {
+	var innerOracleObject = this.oracle;
+	
+	if(config.poolAlias) {
+		this.connectionPromise = new Promise(function(resolve, reject) {
+			innerOracleObject.createPool(config, function(err, pool) {
+				if(err) {
+					var defaultPool = 
+						innerOracleObject.getPool(config.poolAlias);
+					defaultPool.getConnection(function(err, conn) {
+						if(err) {
 							reject(err);
-						else
+						}else {
 							resolve(conn);
-					})
+						}
+					});
 				}else{
-					pool.getConnection(function(err, conn){
-						if(err)
+					pool.getConnection(function(err, conn) {
+						if(err) {
 							reject(err);
-						else
+						}else {
 							resolve(conn);
+						}
 					});
 				}
 			});
 		});
 	}else{
-		this.connectionPromise = new Promise(function(resolve,reject){
-			this.oracle.getConnection(config, function(err, conn){
-				if(err)
+		this.connectionPromise = new Promise(function(resolve, reject) {
+			innerOracleObject.getConnection(config, function(err, conn) {
+				if(err) {
 					reject(err);
-				else
+				}else {
 					resolve(conn);
+				}
 			});
 		});
 	}
 };
 
-OracleConnection.prototype.setConnection = function(connectionPromise){
+OracleConnection.prototype.setConnection = function(connectionPromise) {
 	this.connectionPromise = connectionPromise;
 };
 
-OracleConnection.prototype.getConnection = function(){
+OracleConnection.prototype.getConnection = function() {
 	return this.connectionPromise;
 };
 
-OracleConnection.prototype.execute = function(sql, params, countSql, callback){
+OracleConnection.prototype.execute = function(sql, params, countSql, callback) {
 	this.connectionPromise.then((conn)=>{
 		// handle async queries		
 		var asyncCounter = 1; 
 		var counter = 0;
-		var asyncEnd = false;
+		var returnedData = {};
 
-		if(countSql && countSql != "")
-			var returnedData = {count: 0, data:[]};
-		else
-			var returnedData = {data:[]};
-		if(countSql && countSql != "")
+		if(countSql && countSql != '') {
+			returnedData = {
+				count: 0, 
+				data: []
+			};
+		}else {
+			returnedData = {
+				data: []
+			};
+		}
+
+		if(countSql && countSql != '') {
 			asyncCounter = 2;
-		var endAsyncCallback = function(err, data, type){
-			if(type == "data")
+		}
+
+		var endAsyncCallback = function(err, data, type) {
+			if(type == 'data') {
 				returnedData.data = data;
-			else
+			}else {
 				returnedData.count = data;
+			}
 
 			counter++;
-			if(counter == asyncCounter)
+			if(counter == asyncCounter) {
 				callback(err, returnedData);
+			}
 		};
 		// -- handle async queries 
 		
 		// execute query for data
-		conn.execute(sql, params, function(err, data){
-			if(err){
+		conn.execute(sql, params, function(err, data) {
+			if(err) {
 				endAsyncCallback(err, null);
 				return;
 			}
 			
-			endAsyncCallback(null, data.rows, "data");
+			endAsyncCallback(null, data.rows, 'data');
 			return;
 		});
 
-		if(countSql && countSql != ""){
+		if(countSql && countSql != '') {
 			// execute query for count
-			conn.execute(countSql, params, function(err, data){
-				if(err){
+			conn.execute(countSql, params, function(err, data) {
+				if(err) {
 					endAsyncCallback(err, null);
 					return;
 				}
-				endAsyncCallback(null, data.rows[0]["CNT"], "count");
+				endAsyncCallback(null, data.rows[0]['CNT'], 'count');
 				return;
 			});
 		}
@@ -102,66 +119,70 @@ OracleConnection.prototype.execute = function(sql, params, countSql, callback){
 	});
 };
 
-OracleConnection.prototype.getServerVersion = function(cb){
+OracleConnection.prototype.getServerVersion = function(cb) {
 	this.connectionPromise.then((conn) => {
 		cb(conn.oracleServerVersion);
-	}, (err) => {
+	}, (error) => {
 		cb(0);
 	});
 };
 
-OracleConnection.prototype.setAutoCommit = function(status){
+OracleConnection.prototype.setAutoCommit = function(status) {
 	this.oracle.autoCommit = status;
 };
 
-OracleConnection.prototype.setFetchMode = function(mode){
-	switch(mode){
-		case "OBJECT":
+OracleConnection.prototype.setFetchMode = function(mode) {
+	switch(mode) {
+		case 'OBJECT':
 			this.oracle.outFormat = this.oracle.OBJECT;
 			break;
-		case "ARRAY":
+		case 'ARRAY':
 			this.oracle.outFormat = this.oracle.ARRAY;
 			break;
 	}
 };
 
-OracleConnection.prototype.setFetchSize = function(size){
+OracleConnection.prototype.setFetchSize = function(size) {
 	this.oracle.fetchArraySize = size;
 };
 
-OracleConnection.prototype.commit = function(){
+OracleConnection.prototype.commit = function() {
 	this.connectionPromise.then((conn) => {
-		conn.commit(function(err){
-			if(err)
+		conn.commit(function(err) {
+			if(err) {
 				console.log(err);
+			}
 			this.oracle.setAutoCommit(true);
 		});
-	}, (err) => {
+	}, (error) => {
 		return 0;
 	});
 };
 
-OracleConnection.prototype.rollback = function(){
+OracleConnection.prototype.rollback = function() {
 	this.connectionPromise.then((conn) => {
-		conn.rollback(function(err){
-			if(err)
+		conn.rollback(function(err) {
+			if(err) {
 				console.log(err);
+			}
+
 			this.oracle.setAutoCommit(true);
 		});
-	}, (err) => {
+	}, (error) => {
 		return 0;
 	});
 };
 
-OracleConnection.prototype.closeConnection = function(){
+OracleConnection.prototype.closeConnection = function() {
 	this.connectionPromise.then((conn) => {
-		conn.close(function(err){
-			if(err)
+		conn.close(function(err) {
+			if(err) {
 				console.log(err.message);
+			}
 		});		
-	}, (err) => {
-		console.log(err);
+	}, (error) => {
+		console.log(error);
 	});
-}
+};
 
 module.exports = OracleConnection;
