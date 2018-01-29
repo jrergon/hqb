@@ -10,7 +10,7 @@ describe('MysqlConnection', function(){
 
 		mysqlConnection.initConnection({
 			poolAlias: testConfig.mysqlDb.poolAlias,
-		    connectString: testConfig.mysqlDb.connectString,  
+		    host: testConfig.mysqlDb.connectString,  
 		    user: testConfig.mysqlDb.user,  
 		    password: testConfig.mysqlDb.password,
 		    database: testConfig.mysqlDb.database
@@ -25,7 +25,7 @@ describe('MysqlConnection', function(){
 		var mysqlConnection = new MysqlConnection();
 
 		mysqlConnection.initConnection({
-		    connectString: testConfig.mysqlDb.connectString,  
+		    host: testConfig.mysqlDb.connectString,  
 		    user: testConfig.mysqlDb.user,  
 		    password: testConfig.mysqlDb.password,
 		    database: testConfig.mysqlDb.database
@@ -40,7 +40,7 @@ describe('MysqlConnection', function(){
 		var mysqlConnection = new MysqlConnection();
 
 		mysqlConnection.initConnection({
-		    connectString: testConfig.mysqlDb.connectString,  
+		    host: testConfig.mysqlDb.connectString,  
 		    user: testConfig.mysqlDb.user,  
 		    password: testConfig.mysqlDb.password,
 		    database: testConfig.mysqlDb.database
@@ -59,7 +59,7 @@ describe('MysqlConnection', function(){
 		var mysqlConnection = new MysqlConnection();
 
 		mysqlConnection.initConnection({
-		    connectString: testConfig.mysqlDb.connectString,  
+		    host: testConfig.mysqlDb.connectString,  
 		    user: 'test',  
 		    password: testConfig.mysqlDb.password,
 		    database: testConfig.mysqlDb.database
@@ -79,7 +79,7 @@ describe('MysqlConnection', function(){
 
 		mysqlConnection.initConnection({
 			poolAlias: testConfig.mysqlDb.poolAlias,
-		    connectString: testConfig.mysqlDb.connectString,  
+		    host: testConfig.mysqlDb.connectString,  
 		    user: testConfig.mysqlDb.user,  
 		    password: testConfig.mysqlDb.password,
 		    database: testConfig.mysqlDb.database
@@ -99,7 +99,7 @@ describe('MysqlConnection', function(){
 
 		mysqlConnection.initConnection({
 			poolAlias: testConfig.mysqlDb.poolAlias,
-		    connectString: testConfig.mysqlDb.connectString,  
+		    host: testConfig.mysqlDb.connectString,  
 		    user: testConfig.mysqlDb.user,  
 		    password: testConfig.mysqlDb.password,
 		    database: testConfig.mysqlDb.database
@@ -120,7 +120,7 @@ describe('MysqlConnection', function(){
 
 		mysqlConnection.initConnection({
 			poolAlias: testConfig.mysqlDb.poolAlias,
-		    connectString: testConfig.mysqlDb.connectString,  
+		    host: testConfig.mysqlDb.connectString,  
 		    user: testConfig.mysqlDb.user,  
 		    password: testConfig.mysqlDb.password,
 		    database: testConfig.mysqlDb.database
@@ -140,7 +140,7 @@ describe('MysqlConnection', function(){
 
 		mysqlConnection.initConnection({
 			poolAlias: testConfig.mysqlDb.poolAlias,
-		    connectString: testConfig.mysqlDb.connectString,  
+		    host: testConfig.mysqlDb.connectString,  
 		    user: testConfig.mysqlDb.user,  
 		    password: testConfig.mysqlDb.password,
 		    database: testConfig.mysqlDb.database
