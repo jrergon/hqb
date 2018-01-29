@@ -514,10 +514,16 @@ QueryBuilder.prototype.execute = function(countParam = false, callback) {
 	if(!this.queryString || this.queryString == '') {
 		var sqlObject = queryCreator.createSelectQuery();
 		sqlString = sqlObject.sqlString;
-		countSqlString = sqlObject.countString;
+
+		if(countParam) {
+			countSqlString = sqlObject.countString;
+		}
 	}else{
 		sqlString = this.queryString;
-		countSqlString = queryCreator.createCountQueryFromRaw(sqlString);
+
+		if(countParam) {
+			countSqlString = queryCreator.createCountQueryFromRaw(sqlString);
+		}
 	}
 
 	this.db.execute(sqlString, this.queryParameters, countSqlString, callback);
