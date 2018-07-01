@@ -294,6 +294,40 @@ qb.offset(recordOffsetToReturn);
 qb.limit(recordCountToReturn);
 ```
 
+###### Insert
+
+You can specify the table name for insert via this function.
+
+```js
+qb.insert(tableName);
+```
+
+###### Update
+
+You can specify the table name for update via this function.
+
+```js
+qb.update(tableName);
+```
+
+###### set
+
+You can set properties and aliases via this function.
+
+```js
+qb.set([
+    {
+        property: propertyName,
+        alias: alias
+    },
+    {
+        property: propertyName,
+        alias: alias
+    }
+]);
+
+qb.set(propertyName, alias);
+```
 
 ###### setParameter and setParameters
 

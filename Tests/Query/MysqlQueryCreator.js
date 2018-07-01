@@ -246,4 +246,68 @@ describe('MysqlQueryCreator', function(){
 		expect(query.sqlString).to.equal('SELECT a.PLATE,b.NAME,c.NAME FROM HQB_TEST_BUS a INNER JOIN HQB_TEST_COMPANY b ON a.company_id = b.company_id LEFT JOIN HQB_TEST_BRAND c ON a.brand_id = c.brand_id WHERE a.company_id = 1 AND a.brand_id = 1 HAVING COUNT(b.NAME) > 1 GROUP BY a.PLATE,b.NAME,c.NAME ORDER BY b.name ASC,a.company_id DESC LIMIT 20 OFFSET 10');
 		expect(query.countString).to.equal('SELECT COUNT(*) as CNT FROM (SELECT a.PLATE,b.NAME,c.NAME FROM HQB_TEST_BUS a INNER JOIN HQB_TEST_COMPANY b ON a.company_id = b.company_id LEFT JOIN HQB_TEST_BRAND c ON a.brand_id = c.brand_id WHERE a.company_id = 1 AND a.brand_id = 1 HAVING COUNT(b.NAME) > 1 GROUP BY a.PLATE,b.NAME,c.NAME ORDER BY b.name ASC,a.company_id DESC)');
 	});
+
+	it('insert query without setting property', function() {
+		var queryObject = {
+			insert: 'HQB_TEST_BUS'
+		};
+
+		var queryCreator = new MysqlQueryCreator(queryObject);
+		var query = queryCreator.createInsertQuery();
+
+		expect(query).to.equal('INSERT INTO HQB_TEST_BUS');
+	});
+
+	it('insert query with setting property', function() {
+		var queryObject = {
+			insert: 'HQB_TEST_BUS',
+			set: [
+				{
+					property: 'NAME',
+					alias: ':name'
+				},
+				{
+					property: 'PLATE',
+					alias: ':plate'
+				}
+			]
+		};
+
+		var queryCreator = new MysqlQueryCreator(queryObject);
+		var query = queryCreator.createInsertQuery();
+
+		expect(query).to.equal('INSERT INTO HQB_TEST_BUS SET NAME = :name,PLATE = :plate');
+	});	
+
+	it('update query without setting property', function() {
+		var queryObject = {
+			update: 'HQB_TEST_BUS'
+		};
+
+		var queryCreator = new MysqlQueryCreator(queryObject);
+		var query = queryCreator.createUpdateQuery();
+
+		expect(query).to.equal('UPDATE HQB_TEST_BUS');
+	});
+
+	it('update query with setting property', function() {
+		var queryObject = {
+			update: 'HQB_TEST_BUS',
+			set: [
+				{
+					property: 'NAME',
+					alias: ':name'
+				},
+				{
+					property: 'PLATE',
+					alias: ':plate'
+				}
+			]
+		};
+
+		var queryCreator = new MysqlQueryCreator(queryObject);
+		var query = queryCreator.createUpdateQuery();
+
+		expect(query).to.equal('UPDATE HQB_TEST_BUS SET NAME = :name,PLATE = :plate');
+	});	
 });

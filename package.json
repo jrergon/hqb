@@ -1,10 +1,10 @@
 {
 	"name": "hqb",
-	"version": "1.0.3",
-	"description": "QueryBuilder for nodejs. Supports Oracle for now.",
+	"version": "1.1.0",
+	"description": "QueryBuilder for nodejs. Supports Oracle and Mysql.",
 	"author": "Huseyin Ergon",
 	"license": "MIT",
-	"main" : "hqb.js",
+	"main": "hqb.js",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/jrergon/hqb.git"

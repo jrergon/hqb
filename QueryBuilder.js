@@ -510,19 +510,26 @@ QueryBuilder.prototype.execute = function(countParam = false, callback) {
 
 	var sqlString = '';
 	var countSqlString = '';
-	// check raw or object
-	if(!this.queryString || this.queryString == '') {
-		var sqlObject = queryCreator.createSelectQuery();
-		sqlString = sqlObject.sqlString;
+	
+	if(this.queryObject.insert) {
+		sqlString = queryCreator.createInsertQuery();
+	}else if(this.queryObject.update) {
+		sqlString = queryCreator.createUpdateQuery();
+	}else {
+		// check raw or object
+		if(!this.queryString || this.queryString == '') {
+			var sqlObject = queryCreator.createSelectQuery();
+			sqlString = sqlObject.sqlString;
 
-		if(countParam) {
-			countSqlString = sqlObject.countString;
-		}
-	}else{
-		sqlString = this.queryString;
+			if(countParam) {
+				countSqlString = sqlObject.countString;
+			}
+		}else{
+			sqlString = this.queryString;
 
-		if(countParam) {
-			countSqlString = queryCreator.createCountQueryFromRaw(sqlString);
+			if(countParam) {
+				countSqlString = queryCreator.createCountQueryFromRaw(sqlString);
+			}
 		}
 	}
 
@@ -549,9 +556,16 @@ QueryBuilder.prototype.getSql = function() {
 					this.serverVersion);
 				break;
 		}
+		var sqlString = '';
 
-		var sqlObject = queryCreator.createSelectQuery();
-		var sqlString = sqlObject.sqlString;
+		if(this.queryObject.insert) {
+			sqlString = queryCreator.createInsertQuery();
+		}else if(this.queryObject.update) {
+			sqlString = queryCreator.createUpdateQuery();
+		}else {
+			var sqlObject = queryCreator.createSelectQuery();
+			sqlString = sqlObject.sqlString;
+		}
 
 		return sqlString;
 	}
@@ -564,6 +578,58 @@ This function gives parameters
  */
 QueryBuilder.prototype.getParameters = function() {
 	return this.queryParameters;
+};
+
+/*
+This function insert to table 
+*/
+QueryBuilder.prototype.insert = function(table) {
+	if(typeof table !== 'string') {
+		throw 'Unsupported type for \'insert\' function.';
+	}
+
+	this.queryObject.insert = table;
+};
+
+/*
+This function set properties for insert
+*/
+QueryBuilder.prototype.set = function(params, alias) {
+	if(!Array.isArray(this.queryObject.set)) {
+		this.queryObject.set = [];
+	}
+
+	if(Array.isArray(params)) {
+		for(var i in params) {
+			var item = params[i];
+	
+			if(item.hasOwnProperty('property') 
+				&& item.hasOwnProperty('alias')) {
+				
+				var arr = {
+					property: item.property,
+					alias: item.alias
+				};
+				this.queryObject.set.push(arr);
+			}
+		}
+	}else if(typeof params === 'string') {
+		var arr = {
+			property: params,
+			alias: alias
+		};
+		this.queryObject.set.push(arr);
+	}else {
+		throw 'Unsupported type for \'set\' function.';
+	}
+};
+
+QueryBuilder.prototype.update = function(table) {
+	if(typeof table !== 'string') {
+		throw 'Unsupported type for \'update\' function.';
+	}
+
+	this.queryObject.update = table;
 };
 
 var isObjectEmpty = function(obj) {

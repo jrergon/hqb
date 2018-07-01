@@ -24,6 +24,24 @@ MysqlQueryCreator.prototype.createSelectQuery = function() {
 	};
 };
 
+MysqlQueryCreator.prototype.createInsertQuery = function() {
+	this.sqlString = 'INSERT INTO ';
+
+	this.sqlString += addInsert(this.queryObject.insert);
+	this.sqlString += addSet(this.queryObject.set);
+
+	return this.sqlString;
+};
+
+MysqlQueryCreator.prototype.createUpdateQuery = function() {
+	this.sqlString = 'UPDATE ';
+	
+	this.sqlString += addUpdate(this.queryObject.update);
+	this.sqlString += addSet(this.queryObject.set);
+
+	return this.sqlString;
+};
+
 MysqlQueryCreator.prototype.createCountQueryFromRaw = function(sqlString) {
 	return createCountString(sqlString);
 };
@@ -171,6 +189,29 @@ var addLimit = function(sql, offset, limit) {
 
 var createCountString = function(sqlString) {
 	return 'SELECT COUNT(*) as CNT FROM (' + sqlString + ')';
+};
+
+var addInsert = function(table) {
+	return table;
+};
+
+var addUpdate = function(table) {
+	return table;
+};
+
+var addSet = function(params) {
+	if(!Array.isArray(params) || params.length === 0) {
+		return '';
+	}
+
+	var tmp = [];
+	for(var i in params) {
+		var item = params[i];
+		var str = item.property + ' = ' + item.alias
+		tmp.push(str);
+	}
+
+	return ' SET ' + tmp.join();
 };
 
 module.exports = MysqlQueryCreator;

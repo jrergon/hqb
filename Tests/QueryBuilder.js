@@ -401,4 +401,73 @@ describe('QueryBuilder for Oracle', function(){
 		expect(qb.queryParameters).to.have.deep.property('companyId', 1);
 		expect(Object.keys(qb.queryParameters).length).to.equal(2);
 	});
+
+	it('insert function', function() {
+		var serverVersion = '1201000000';
+		var serverType = 'MYSQL';
+
+		var qb = new QueryBuilder(serverType, serverVersion);
+		qb.insert('HQB_TEST_BUS');
+
+		expect(qb.queryObject.insert).to.be.a('string');
+		expect(qb.queryObject.insert).to.equal('HQB_TEST_BUS');
+	});
+
+	it('update function', function() {
+		var serverVersion = '1201000000';
+		var serverType = 'MYSQL';
+
+		var qb = new QueryBuilder(serverType, serverVersion);
+		qb.update('HQB_TEST_BUS');
+
+		expect(qb.queryObject.update).to.be.a('string');
+		expect(qb.queryObject.update).to.equal('HQB_TEST_BUS');
+	});
+
+	it('set function with array', function() {
+		var serverVersion = '1201000000';
+		var serverType = 'MYSQL';
+
+		var qb = new QueryBuilder(serverType, serverVersion);
+		qb.set([
+			{
+				property: 'NAME',
+				alias: ':name'
+			},
+			{
+				property: 'PLATE',
+				alias: ':plate'
+			}
+		]);
+
+		expect(qb.queryObject.set).to.be.an('array');
+		expect(qb.queryObject.set).to.have.deep.members([ 
+			{
+				property: 'NAME',
+				alias: ':name'
+			},
+			{
+				property: 'PLATE',
+				alias: ':plate'
+			}
+		]);
+		expect(qb.queryObject.set).to.have.lengthOf(2);
+	});
+
+	it('set function with two parameters', function() {
+		var serverVersion = '1201000000';
+		var serverType = 'MYSQL';
+
+		var qb = new QueryBuilder(serverType, serverVersion);
+		qb.set('NAME', ':name');
+
+		expect(qb.queryObject.set).to.be.an('array');
+		expect(qb.queryObject.set).to.have.deep.members([ 
+			{
+				property: 'NAME',
+				alias: ':name'
+			}
+		]);
+		expect(qb.queryObject.set).to.have.lengthOf(1);
+	});
 });
