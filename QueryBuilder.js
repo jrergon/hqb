@@ -589,6 +589,8 @@ QueryBuilder.prototype.insert = function(table) {
 	}
 
 	this.queryObject.insert = table;
+
+	return this;
 };
 
 /*
@@ -622,6 +624,8 @@ QueryBuilder.prototype.set = function(params, alias) {
 	}else {
 		throw 'Unsupported type for \'set\' function.';
 	}
+
+	return this;
 };
 
 QueryBuilder.prototype.update = function(table) {
@@ -630,6 +634,8 @@ QueryBuilder.prototype.update = function(table) {
 	}
 
 	this.queryObject.update = table;
+
+	return this;
 };
 
 var isObjectEmpty = function(obj) {
