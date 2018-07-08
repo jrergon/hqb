@@ -440,12 +440,11 @@ QueryBuilder.prototype.limit = function(limit) {
 This function binds parameters to sql
  */
 QueryBuilder.prototype.setParameter = function(parameter) {
-	if((Array.isArray(parameter) || typeof parameter === 'string' ) 
-		&& !Array.isArray(this.queryParameters)) {
+	if(!Array.isArray(this.queryParameters)) {
 		this.queryParameters = [];
 	}
 
-	if(typeof parameter === 'string') {
+	if(!Array.isArray(this.parameter)) {
 		this.queryParameters.push(parameter);
 	}else {
 		for(var i in parameter) {

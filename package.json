@@ -1,6 +1,6 @@
 {
 	"name": "hqb",
-	"version": "1.1.1",
+	"version": "1.1.2",
 	"description": "QueryBuilder for nodejs. Supports Oracle and Mysql.",
 	"author": "Huseyin Ergon",
 	"license": "MIT",

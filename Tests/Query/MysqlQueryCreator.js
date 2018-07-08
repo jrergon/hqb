@@ -264,11 +264,11 @@ describe('MysqlQueryCreator', function(){
 			set: [
 				{
 					property: 'NAME',
-					alias: ':name'
+					alias: '?'
 				},
 				{
 					property: 'PLATE',
-					alias: ':plate'
+					alias: '?'
 				}
 			]
 		};
@@ -276,7 +276,7 @@ describe('MysqlQueryCreator', function(){
 		var queryCreator = new MysqlQueryCreator(queryObject);
 		var query = queryCreator.createInsertQuery();
 
-		expect(query).to.equal('INSERT INTO HQB_TEST_BUS SET NAME = :name,PLATE = :plate');
+		expect(query).to.equal('INSERT INTO HQB_TEST_BUS SET NAME = ?,PLATE = ?');
 	});	
 
 	it('update query without setting property', function() {
