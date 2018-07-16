@@ -444,9 +444,7 @@ QueryBuilder.prototype.setParameter = function(parameter) {
 		this.queryParameters = [];
 	}
 
-	if(typeof parameter == 'object' ) {
-		this.queryParameters = parameter;
-	}else if(!Array.isArray(this.parameter)) {
+	if(!Array.isArray(this.parameter) && typeof parameter != 'object') {
 		this.queryParameters.push(parameter);
 	}else {
 		for(var i in parameter) {
