@@ -350,4 +350,31 @@ describe('MysqlQueryCreator', function(){
 
 		expect(query).to.equal('UPDATE HQB_TEST_BUS SET NAME = :name,PLATE = :plate');
 	});	
+
+	it('update query with setting property with where', function() {
+		var queryObject = {
+			update: {
+				table: 'HQB_TEST_BUS'
+			},
+			set: [
+				{
+					property: 'NAME',
+					alias: ':name'
+				},
+				{
+					property: 'PLATE',
+					alias: ':plate'
+				}
+			],
+			where : [ 
+				{ filter : 'a.company_id = 1', condition : 'AND' },
+				{ filter : 'a.brand_id = 1', condition : 'AND' }
+			]
+		};
+
+		var queryCreator = new MysqlQueryCreator(queryObject);
+		var query = queryCreator.createUpdateQuery();
+
+		expect(query).to.equal('UPDATE HQB_TEST_BUS SET NAME = :name,PLATE = :plate WHERE a.company_id = 1 AND a.brand_id = 1');
+	});	
 });

@@ -39,6 +39,8 @@ MysqlQueryCreator.prototype.createUpdateQuery = function() {
 	this.sqlString += addUpdate(this.queryObject.update);
 	this.sqlString += addJoins(this.queryObject.join);
 	this.sqlString += addSet(this.queryObject.set);
+	this.sqlString += addWheres(this.queryObject.where);
+	this.sqlString += addHavings(this.queryObject.having);
 
 	return this.sqlString;
 };
