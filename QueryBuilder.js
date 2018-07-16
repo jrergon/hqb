@@ -444,7 +444,9 @@ QueryBuilder.prototype.setParameter = function(parameter) {
 		this.queryParameters = [];
 	}
 
-	if(!Array.isArray(this.parameter)) {
+	if(typeof parameter == 'object' ) {
+		this.queryParameters = parameter;
+	}else if(!Array.isArray(this.parameter)) {
 		this.queryParameters.push(parameter);
 	}else {
 		for(var i in parameter) {
@@ -627,12 +629,14 @@ QueryBuilder.prototype.set = function(params, alias) {
 	return this;
 };
 
-QueryBuilder.prototype.update = function(table) {
+QueryBuilder.prototype.update = function(table, alias) {
 	if(typeof table !== 'string') {
 		throw 'Unsupported type for \'update\' function.';
 	}
 
-	this.queryObject.update = table;
+	this.queryObject.update = {};
+	this.queryObject.update.table = table;
+	this.queryObject.update.alias = alias;
 
 	return this;
 };

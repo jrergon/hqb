@@ -281,7 +281,9 @@ describe('MysqlQueryCreator', function(){
 
 	it('update query without setting property', function() {
 		var queryObject = {
-			update: 'HQB_TEST_BUS'
+			update: {
+				table: 'HQB_TEST_BUS'
+			}
 		};
 
 		var queryCreator = new MysqlQueryCreator(queryObject);
@@ -290,9 +292,47 @@ describe('MysqlQueryCreator', function(){
 		expect(query).to.equal('UPDATE HQB_TEST_BUS');
 	});
 
+	it('update query with alias', function() {
+		var queryObject = {
+			update: {
+				table: 'HQB_TEST_BUS',
+				alias: 'a'
+			}
+		};
+
+		var queryCreator = new MysqlQueryCreator(queryObject);
+		var query = queryCreator.createUpdateQuery();
+
+		expect(query).to.equal('UPDATE HQB_TEST_BUS a');
+	});
+
+	it('update query with joins', function() {
+		var queryObject = {
+			update: {
+				table: 'HQB_TEST_BUS',
+				alias: 'a'
+			},
+			join : [ 
+				{ 
+					tableName : 'HQB_TEST_COMPANY', 
+					alias : 'b', 
+					type : 'INNER', 
+					conditions : 'a.company_id = b.company_id'
+				}
+			]
+		};
+
+		var queryCreator = new MysqlQueryCreator(queryObject);
+		var query = queryCreator.createUpdateQuery();
+
+		expect(query).to.equal('UPDATE HQB_TEST_BUS a INNER JOIN HQB_TEST_COMPANY b ON a.company_id = b.company_id');
+	});
+
 	it('update query with setting property', function() {
 		var queryObject = {
-			update: 'HQB_TEST_BUS',
+			update: {
+				table: 'HQB_TEST_BUS'
+			},
 			set: [
 				{
 					property: 'NAME',

@@ -37,6 +37,7 @@ MysqlQueryCreator.prototype.createUpdateQuery = function() {
 	this.sqlString = 'UPDATE ';
 	
 	this.sqlString += addUpdate(this.queryObject.update);
+	this.sqlString += addJoins(this.queryObject.join);
 	this.sqlString += addSet(this.queryObject.set);
 
 	return this.sqlString;
@@ -195,8 +196,11 @@ var addInsert = function(table) {
 	return table;
 };
 
-var addUpdate = function(table) {
-	return table;
+var addUpdate = function(update) {
+	if(update.alias) {
+		return update.table + " " + update.alias;
+	}
+	return update.table;
 };
 
 var addSet = function(params) {

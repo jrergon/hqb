@@ -420,8 +420,20 @@ describe('QueryBuilder for Oracle', function(){
 		var qb = new QueryBuilder(serverType, serverVersion);
 		qb.update('HQB_TEST_BUS');
 
-		expect(qb.queryObject.update).to.be.a('string');
-		expect(qb.queryObject.update).to.equal('HQB_TEST_BUS');
+		expect(qb.queryObject.update).to.be.an('object');
+		expect(qb.queryObject.update.table).to.equal('HQB_TEST_BUS');
+	});
+
+	it('update function with alias', function() {
+		var serverVersion = '1201000000';
+		var serverType = 'MYSQL';
+
+		var qb = new QueryBuilder(serverType, serverVersion);
+		qb.update('HQB_TEST_BUS', 'a');
+
+		expect(qb.queryObject.update).to.be.an('object');
+		expect(qb.queryObject.update.table).to.equal('HQB_TEST_BUS');
+		expect(qb.queryObject.update.alias).to.equal('a');
 	});
 
 	it('set function with array', function() {
