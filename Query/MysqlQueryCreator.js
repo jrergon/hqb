@@ -33,6 +33,12 @@ MysqlQueryCreator.prototype.createInsertQuery = function() {
 	return this.sqlString;
 };
 
+MysqlQueryCreator.prototype.createCallQuery = function() {
+	this.sqlString = 'CALL ' + this.queryObject.call;
+
+	return this.sqlString;
+}
+
 MysqlQueryCreator.prototype.createUpdateQuery = function() {
 	this.sqlString = 'UPDATE ';
 	

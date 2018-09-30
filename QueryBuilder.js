@@ -10,6 +10,15 @@ var QueryBuilder = function(databaseType, serverVersion, db) {
 	this.db = db;
 };
 
+QueryBuilder.prototype.call = function(procedure) {
+	if(typeof procedure !== 'string') {
+		throw 'Unsupported type for \'call\' function.';
+	}
+	this.queryObject.call = procedure;
+
+	return this;
+};
+
 /*
 This function adds items to select ( parameter can be both array and string )
 WARNING: This function overrides previous calls to select
@@ -510,7 +519,9 @@ QueryBuilder.prototype.execute = function(countParam = false, callback) {
 	var sqlString = '';
 	var countSqlString = '';
 	
-	if(this.queryObject.insert) {
+	if(this.queryObject.call) {
+		sqlString = queryCreator.createCallQuery();
+	}else if(this.queryObject.insert) {
 		sqlString = queryCreator.createInsertQuery();
 	}else if(this.queryObject.update) {
 		sqlString = queryCreator.createUpdateQuery();
