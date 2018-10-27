@@ -115,7 +115,7 @@ OracleConnection.prototype.execute = function(sql, params, countSql, callback) {
 			});
 		}
 	}, (err) =>{
-		throw err.message;
+		throw err;
 	});
 };
 

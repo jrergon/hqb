@@ -15,6 +15,7 @@
 	"homepage": "https://github.com/jrergon/hqb",
 	"dependencies": {
 		"chai": "^4.1.2",
+		"mongodb": "^3.1.8",
 		"mysql": "^2.15.0",
 		"oracledb": "^2.0.15"
 	}
